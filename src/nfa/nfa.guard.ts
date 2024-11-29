@@ -14,6 +14,7 @@ export class NfaGuard implements CanActivate {
 
     const nfaClientId = req.headers[RequestHeader.NfaClientId] as string;
     const nfaClientSecert = req.headers[RequestHeader.NfaClientSecret] as string;
+    const nfaAccountId = req.headers[RequestHeader.NfaAccountId] as string;
 
     if (!nfaClientId) {
       throw new ForbiddenException(`${RequestHeader.NfaClientId} not in request headers`);
@@ -23,8 +24,13 @@ export class NfaGuard implements CanActivate {
       throw new ForbiddenException(`${RequestHeader.NfaClientSecret} not in request headers`);
     }
 
+    if (!nfaAccountId) {
+      throw new ForbiddenException(`${RequestHeader.NfaAccountId} not in request headers`);
+    }
+
     this.contextService.setNfaClientId(nfaClientId);
     this.contextService.setNfaClientId(nfaClientSecert);
+    this.contextService.setNfaClientId(nfaAccountId);
 
     return true;
   }

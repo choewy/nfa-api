@@ -34,4 +34,12 @@ export class ContextService {
   get nfaClientSecret(): string | null {
     return this.clsService.get(ContextKey.NfaClientSecret);
   }
+
+  setNfaAccountId(nfaAccountId: string) {
+    this.clsService.set(ContextKey.NfaAccountId, nfaAccountId);
+  }
+
+  get nfaAccountId(): string | null {
+    return this.clsService.get(ContextKey.NfaAccountId);
+  }
 }

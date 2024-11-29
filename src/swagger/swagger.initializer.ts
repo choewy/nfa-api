@@ -26,6 +26,14 @@ export class SwaggerInitializer {
         },
         RequestHeader.NfaClientSecret,
       )
+      .addApiKey(
+        {
+          name: RequestHeader.NfaAccountId,
+          type: 'apiKey',
+          in: 'header',
+        },
+        RequestHeader.NfaAccountId,
+      )
       .build();
   }
 
