@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ClsModule } from 'nestjs-cls';
 import { v4 } from 'uuid';
 
+import { ContextInterceptor } from './context.interceptor';
 import { ContextService } from './context.service';
 import { ContextKey } from './enums';
 
@@ -20,7 +21,7 @@ import { ContextKey } from './enums';
       },
     }),
   ],
-  providers: [ContextService],
-  exports: [ContextService],
+  providers: [ContextService, ContextInterceptor],
+  exports: [ContextService, ContextInterceptor],
 })
 export class ContextModule {}
