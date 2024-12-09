@@ -1,5 +1,5 @@
 export enum NfaUrl {
-  Sandbox = 'https://sandbpx-api.commerce.naver.com',
+  Sandbox = 'https://sandbox-api.commerce.naver.com',
   Production = 'https://api.commerce.naver.com',
 }
 

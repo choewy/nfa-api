@@ -37,6 +37,10 @@ export class NfaOAuthContext {
     return this.expiresIn.diffNow('milliseconds').get('milliseconds') < 0;
   }
 
+  get remainSeconds() {
+    return this.expiresIn.diffNow('seconds').get('seconds');
+  }
+
   get bearerAuth() {
     return `Bearer ${this.accessToken}`;
   }

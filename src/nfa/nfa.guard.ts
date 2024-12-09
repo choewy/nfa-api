@@ -29,8 +29,8 @@ export class NfaGuard implements CanActivate {
     }
 
     this.contextService.setNfaClientId(nfaClientId);
-    this.contextService.setNfaClientId(nfaClientSecert);
-    this.contextService.setNfaClientId(nfaAccountId);
+    this.contextService.setNfaClientSecret(nfaClientSecert);
+    this.contextService.setNfaAccountId(nfaAccountId);
 
     return true;
   }

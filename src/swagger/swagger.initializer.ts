@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 
 import { RequestHeader } from '@/common/enums';
 
@@ -37,7 +38,48 @@ export class SwaggerInitializer {
       .build();
   }
 
+  private get customOptions() {
+    const configService = this.app.get(ConfigService);
+
+    const nfaClientId = configService.get('SWAGGER_NFA_CLIENT_ID');
+    const nfaClientSecret = configService.get('SWAGGER_NFA_CLIENT_SECRET');
+    const nfaAccountId = configService.get('SWAGGER_NFA_ACCOUNT_ID');
+    const customOptions: SwaggerCustomOptions = { swaggerOptions: { docExpansion: 'none', authAction: {} } };
+
+    if (nfaClientId) {
+      customOptions.swaggerOptions.authAction[RequestHeader.NfaClientId] = {
+        schema: {
+          type: 'apiKey',
+          in: 'header',
+        },
+        value: nfaClientId,
+      };
+    }
+
+    if (nfaClientSecret) {
+      customOptions.swaggerOptions.authAction[RequestHeader.NfaClientSecret] = {
+        schema: {
+          type: 'apiKey',
+          in: 'header',
+        },
+        value: nfaClientSecret,
+      };
+    }
+
+    if (nfaAccountId) {
+      customOptions.swaggerOptions.authAction[RequestHeader.NfaAccountId] = {
+        schema: {
+          type: 'apiKey',
+          in: 'header',
+        },
+        value: nfaAccountId,
+      };
+    }
+
+    return customOptions;
+  }
+
   setup(path = 'swagger') {
-    SwaggerModule.setup(path, this.app, SwaggerModule.createDocument(this.app, this.config));
+    SwaggerModule.setup(path, this.app, SwaggerModule.createDocument(this.app, this.config), this.customOptions);
   }
 }
