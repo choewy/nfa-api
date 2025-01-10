@@ -1,3 +1,5 @@
+import { NfaDeliveryMethod } from './enums';
+
 export interface NfaOAuthTokenRequestBody {
   type: 'SELLER';
   grant_type: 'client_credentials';
@@ -11,4 +13,16 @@ export interface NfaOAuthTokenResponseBody {
   token_type: string;
   access_token: string;
   expires_in: number;
+}
+
+export interface NfaDispatchProductOrderRequestBody {
+  productOrderId: string;
+  deliveryMethod: NfaDeliveryMethod;
+  dispatchDate: string;
+  deliveryCompanyCode: string;
+  trackingNumber: string;
+}
+
+export interface NfaDispatchProductOrdersRequestBody {
+  dispatchProductOrders: NfaDispatchProductOrderRequestBody[];
 }

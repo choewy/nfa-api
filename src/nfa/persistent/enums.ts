@@ -10,3 +10,8 @@ export enum NfaApiUrlPath {
   ProductOrdersConfirm = 'partner/v1/pay-order/seller/product-orders/confirm',
   ProductOrdersDispatch = 'partner/v1/pay-order/seller/product-orders/dispatch',
 }
+
+export enum NfaDeliveryMethod {
+  Delivery = 'DELIVERY',
+  DeliveryDirectly = 'DIRECT_DELIVERY',
+}

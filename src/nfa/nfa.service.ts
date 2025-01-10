@@ -7,10 +7,12 @@ import { lastValueFrom } from 'rxjs';
 import { NfaOAuthContext } from './context/nfa-oauth';
 import { NfaGetLastChangedStatusesParamDTO } from './dto/nfa-get-last-changed-statuses-param.dto';
 import { NfaGetProductOrdersParamDTO } from './dto/nfa-get-product-orders-param.dto';
-import { NfaApiUrlPath, NfaUrl } from './persistent/enums';
-import { NfaOAuthTokenResponseBody } from './persistent/interfaces';
+import { NfaSendInvoicesParamsDTO } from './dto/nfa-send-invoices-params.dto';
+import { NfaApiUrlPath, NfaDeliveryMethod, NfaUrl } from './persistent/enums';
+import { NfaDispatchProductOrderRequestBody, NfaOAuthTokenResponseBody } from './persistent/interfaces';
 
 import { ConfigKey, NodeEnv } from '@/common/enums';
+import { toArray } from '@/common/transformer/to-array';
 import { ContextService } from '@/context/context.service';
 
 @Injectable()
@@ -141,7 +143,7 @@ export class NfaService {
       throw new BadRequestException('invalid params');
     }
 
-    const allProductOrderIds = param.productOrderIds ?? [];
+    const allProductOrderIds = toArray(param.productOrderIds) ?? [];
 
     if (!param.productOrderIds) {
       const getLastChangedStatusesParamDTO = new NfaGetLastChangedStatusesParamDTO();
@@ -199,5 +201,40 @@ export class NfaService {
     }
 
     return productOrders;
+  }
+
+  async sendInvoices(body: NfaSendInvoicesParamsDTO) {
+    const oAuthContext = await this.getNfaOAuth();
+
+    const dispatchDate = DateTime.local().toISO({ includeOffset: true });
+    const dispatchProductOrders: NfaDispatchProductOrderRequestBody[] = [];
+
+    for (const row of body.rows) {
+      dispatchProductOrders.push({
+        productOrderId: row.productOrderId,
+        deliveryMethod: row.expType === '직배' ? NfaDeliveryMethod.DeliveryDirectly : NfaDeliveryMethod.Delivery,
+        deliveryCompanyCode: row.expKey,
+        trackingNumber: row.invoice,
+        dispatchDate,
+      });
+    }
+
+    const { ok, data } = await lastValueFrom(
+      this.httpService.post(
+        this.createUrl('/partner/v1/pay-order/seller/product-orders/dispatch'),
+        { dispatchProductOrders },
+        { headers: { Authorization: oAuthContext.bearerAuth } },
+      ),
+    )
+      .then((response) => ({
+        ok: true,
+        data: response?.data,
+      }))
+      .catch((e) => ({
+        ok: false,
+        data: e?.response?.data,
+      }));
+
+    return { ok, data };
   }
 }

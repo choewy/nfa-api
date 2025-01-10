@@ -1,8 +1,9 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 import { NfaGetLastChangedStatusesParamDTO } from './dto/nfa-get-last-changed-statuses-param.dto';
 import { NfaGetProductOrdersParamDTO } from './dto/nfa-get-product-orders-param.dto';
+import { NfaSendInvoicesParamsDTO } from './dto/nfa-send-invoices-params.dto';
 import { NfaGuard } from './nfa.guard';
 import { NfaService } from './nfa.service';
 
@@ -30,5 +31,10 @@ export class NfaController {
   @Get('productOrders')
   async getProductOrders(@Query() queryParam: NfaGetProductOrdersParamDTO) {
     return this.nfaService.getProductOrders(queryParam);
+  }
+
+  @Post('sendInvoices')
+  async sendInvoices(@Body() body: NfaSendInvoicesParamsDTO) {
+    return this.nfaService.sendInvoices(body);
   }
 }
